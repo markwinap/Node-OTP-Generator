@@ -141,27 +141,6 @@ const base32ToBuffer = (str: string): Buffer => {
     }
     return buffer;
 };
-const base32ToBufferOld = (str: string): Buffer => {
-    // Convert the base32 encoded string to a binary string
-    const binary = str.split('').map((char) => {
-        // Convert the character to its base32 value
-        const value = base32[char.charCodeAt(0)];
-        if (value === undefined) {
-            throw new Error(`Invalid base32 character: ${char}`);
-        }
-        // Convert the value to a binary string
-        return value.toString(2).padStart(5, '0');
-    }).join('');
-
-    // Convert the binary string to a buffer
-    const buffer = Buffer.alloc(binary.length / 8);
-    for (let i = 0; i < binary.length; i += 8) {
-        buffer[i / 8] = parseInt(binary.slice(i, i + 8), 2);
-    }
-
-    return buffer;
-};
-
 /**
  * Calculate the time hex with padding of 16 characters
  *
