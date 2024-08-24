@@ -1,9 +1,13 @@
 import { createHmac } from 'node:crypto';
 
+
+type Algorithm = "SHA-1" | "SHA-256" | "SHA-384" | "SHA-512"
+type Encoding = "hex" | "ascii"
+
 interface Options {
     digits?: number
-    algorithm?: 'SHA-1' | 'SHA-256' | 'SHA-384' | 'SHA-512'
-    encoding?: 'hex' | 'ascii'
+    algorithm?: Algorithm
+    encoding?: Encoding
     period?: number
     timestamp?: number
 }
@@ -46,7 +50,7 @@ const base32: { [key: number]: number } = {
 const initializeOptions = (options: Options): Required<Options> => {
     return {
         digits: 6,
-        algorithm: "SHA-1",
+        algorithm: 'SHA-1',
         encoding: "hex",
         period: 30,
         timestamp: Date.now(),
@@ -203,11 +207,10 @@ const calculateMaskedValue = (signatureHex: string, offset: number): number => {
  * @returns {number}
  * @example calculateOtp("b6a9dcc66852d95d39faec22a0fd2719d9441f9a4108969507e710d17dacf72c", 6) // 461529
  */
-const calculateOtp = (signatureHex: string, digits: number): number => {
+const calculateOtp = (signatureHex: string, digits: number): string => {
     const offset = calculateOffset(signatureHex);
     const maskedValue = calculateMaskedValue(signatureHex, offset);
-    // Return the masked value modulo 10^digits
-    return maskedValue % Math.pow(10, digits);
+    return maskedValue.toString().slice(-digits)
 };
 
 /**
@@ -218,7 +221,7 @@ const calculateOtp = (signatureHex: string, digits: number): number => {
  * @returns {{ otp: number, expires: number }}
  * @example generate("JBSWY3DPEHPK3PXP", { timestamp: 1465324707000, algorithm: "SHA-256" }) // { otp: 461529, expires: 1465324707000 }
  */
-const generate = (key: string, options: Options = {}): { otp: number, expires: number } => {
+const generate = (key: string, options: Options = {}): { otp: string, expires: number } => {
     const _options = initializeOptions(options);
     const { digits, algorithm, encoding, period, timestamp } = _options;
 
@@ -232,4 +235,4 @@ const generate = (key: string, options: Options = {}): { otp: number, expires: n
     return { otp, expires };
 };
 
-export { generate };
+export { generate, Options, Algorithm, Encoding };
