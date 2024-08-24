@@ -51,7 +51,7 @@ const initializeOptions = (options: Options): Required<Options> => {
     return {
         digits: 6,
         algorithm: 'SHA-1',
-        encoding: "hex",
+        encoding: 'hex',
         period: 30,
         timestamp: Date.now(),
         ...options,
@@ -230,7 +230,9 @@ const generate = (key: string, options: Options = {}): { otp: string, expires: n
     const otp = calculateOtp(signatureHex, digits);
 
     const step = period * 1000;
-    const expires = Math.ceil((timestamp + 1) / step) * step;
+    // Get expiration time, example if period is 30 seconds and timestamp is 1465324707000 then expiration is 1467873030000
+    const expires = timestamp + step - (timestamp % step);
+    
 
     return { otp, expires };
 };
