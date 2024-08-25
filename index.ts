@@ -221,7 +221,7 @@ const calculateOtp = (signatureHex: string, digits: number): string => {
  * @returns {{ otp: number, expires: number }}
  * @example generate("JBSWY3DPEHPK3PXP", { timestamp: 1465324707000, algorithm: "SHA-256" }) // { otp: 461529, expires: 1465324707000 }
  */
-const generate = (key: string, options: Options = {}): { otp: string, expires: number } => {
+const generate = (key: string, options: Options = {}): { otp: string, expires: number, remaining: number } => {
     const _options = initializeOptions(options);
     const { digits, algorithm, encoding, period, timestamp } = _options;
 
@@ -232,9 +232,10 @@ const generate = (key: string, options: Options = {}): { otp: string, expires: n
     const step = period * 1000;
     // Get expiration time, example if period is 30 seconds and timestamp is 1465324707000 then expiration is 1467873030000
     const expires = timestamp + step - (timestamp % step);
-    
+    // Remaining time in seconds
+    const remaining = Math.ceil((expires - timestamp) / 1000);
 
-    return { otp, expires };
+    return { otp, expires, remaining };
 };
 
 export { generate, Options, Algorithm, Encoding };
