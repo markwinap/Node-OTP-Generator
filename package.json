@@ -1,12 +1,13 @@
 {
-  "name": "node-otp-generator",
+  "name": "node-ts-otp-generator",
   "version": "1.0.0",
   "description": "",
-  "main": "index.js",
+  "main": "index.ts",
   "scripts": {
     "test": "jest"
   },
-  "author": "",
+  "author": "Marco Martinez",
+  "email": "markwinap@gmail.com",
   "license": "ISC",
   "devDependencies": {
     "@jest/globals": "^29.7.0",

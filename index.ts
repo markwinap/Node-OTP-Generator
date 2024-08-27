@@ -1,8 +1,8 @@
 import { createHmac } from 'node:crypto';
 
 
-type Algorithm = "SHA-1" | "SHA-256" | "SHA-384" | "SHA-512"
-type Encoding = "hex" | "ascii"
+type Algorithm = 'SHA-1' | 'SHA-256' | 'SHA-384' | 'SHA-512'
+type Encoding = 'hex' | 'ascii'
 
 interface Options {
     digits?: number
@@ -120,6 +120,15 @@ const hmacSha = (algorithm: string, key: Buffer, data: Buffer) => {
     return hmac.digest('hex');
 }
 /**
+ * Converts a string to a Buffer using ASCII encoding.
+ * 
+ * @param str - The string to convert.
+ * @returns The Buffer representation of the string.
+ */
+const asciiToBuffer = (str: string): Buffer => {
+    return Buffer.from(str, 'ascii');
+};
+/**
  * Converts a base32 encoded string to a Buffer.
  * 
  * @param {string} str - The base32 encoded string to convert.
@@ -167,8 +176,8 @@ const calculateTimeHex = (timestamp: number, period: number): string => {
  * @returns {string}
  * @example calculateSignatureHex("SHA-256", "JBSWY3DPEHPK3PXP", "0000000002e94d7c") // b6a9dcc66852d95d39faec22a0fd2719d9441f9a4108969507e710d17dacf72c
  */
-const calculateSignatureHex = (algorithm: string, key: string, timeHex: string): string => {
-    return hmacSha(algorithm, base32ToBuffer(key), hex2buf(timeHex));
+const calculateSignatureHex = (algorithm: string, key: Buffer, timeHex: string): string => {
+    return hmacSha(algorithm, key, hex2buf(timeHex));
 };
 
 /**
@@ -226,7 +235,8 @@ const generate = (key: string, options: Options = {}): { otp: string, expires: n
     const { digits, algorithm, encoding, period, timestamp } = _options;
 
     const timeHex = calculateTimeHex(timestamp, period);
-    const signatureHex = calculateSignatureHex(algorithm, key, timeHex);
+    const keyBuffer = encoding === 'hex' ? base32ToBuffer(key) : asciiToBuffer(key);
+    const signatureHex = calculateSignatureHex(algorithm, keyBuffer, timeHex);
     const otp = calculateOtp(signatureHex, digits);
 
     const step = period * 1000;
