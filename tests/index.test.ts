@@ -1,4 +1,4 @@
-import { generate, Options } from '../index';
+import { Algorithm, generate, Options } from '../index';
 
 describe('generate', () => {
     beforeEach(() => jest.useFakeTimers())
@@ -58,7 +58,7 @@ describe('generate', () => {
         jest.setSystemTime(1465324707000);
         const expected = '093730';
         const key = 'JBSWY3DPEHPK3PXP';
-        const { otp, expires } = generate(key,  { algorithm: 'SHA-512' });
+        const { otp, expires } = generate(key,  { algorithm: Algorithm.SHA512 });
         expect(otp).toBe(expected);
 	})
 });

@@ -1,8 +1,15 @@
 import { createHmac } from 'node:crypto';
 
-
-type Algorithm = 'SHA-1' | 'SHA-256' | 'SHA-384' | 'SHA-512'
-type Encoding = 'hex' | 'ascii'
+enum Algorithm {
+	SHA1 = 'SHA-1',
+	SHA256 = 'SHA-256',
+	SHA384 = 'SHA-384',
+	SHA512 = 'SHA-512'
+}
+enum Encoding {
+	HEX = 'hex',
+	ASCII = 'ascii'
+}
 
 interface Options {
     digits?: number
@@ -50,8 +57,8 @@ const base32BinValues : { [key: string]: string } = {
 const initializeOptions = (options: Options): Required<Options> => {
     return {
         digits: 6,
-        algorithm: 'SHA-1',
-        encoding: 'hex',
+        algorithm: Algorithm.SHA1,
+        encoding: Encoding.HEX,
         period: 30,
         timestamp: Date.now(),
         ...options,
@@ -230,7 +237,7 @@ const generate = (key: string, options: Options = {}): { otp: string, expires: n
     const { digits, algorithm, encoding, period, timestamp } = _options;
 
     const timeHex = calculateTimeHex(timestamp, period);
-    const keyBuffer = encoding === 'hex' ? base32ToBuffer(key) : asciiToBuffer(key);
+    const keyBuffer = encoding === Encoding.HEX ? base32ToBuffer(key) : asciiToBuffer(key);
     const signatureHex = calculateSignatureHex(algorithm, keyBuffer, timeHex);
     const otp = calculateOtp(signatureHex, digits);
 

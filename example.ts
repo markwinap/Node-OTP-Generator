@@ -2,11 +2,11 @@ import { generate, Options } from './index';
 
 const main = () => {
 
-    const key = 'JBSWY3DPEHPK3@PXP';
+    const key = 'JBSWY3DPEHPK3PXP';
 
     setInterval(() => {
-        const { otp, expires, remaining } = generate(key);
-        console.log(otp, expires, remaining);
+        const result = generate(key);
+        console.log(result);
     }, 1000);
 };
 main();
