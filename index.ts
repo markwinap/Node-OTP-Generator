@@ -12,39 +12,39 @@ interface Options {
     timestamp?: number
 }
 
-const base32: { [key: number]: number } = {
-    50: 26,
-    51: 27,
-    52: 28,
-    53: 29,
-    54: 30,
-    55: 31,
-    65: 0,
-    66: 1,
-    67: 2,
-    68: 3,
-    69: 4,
-    70: 5,
-    71: 6,
-    72: 7,
-    73: 8,
-    74: 9,
-    75: 10,
-    76: 11,
-    77: 12,
-    78: 13,
-    79: 14,
-    80: 15,
-    81: 16,
-    82: 17,
-    83: 18,
-    84: 19,
-    85: 20,
-    86: 21,
-    87: 22,
-    88: 23,
-    89: 24,
-    90: 25,
+const base32BinValues : { [key: string]: string } = {
+    A: '00000',
+    B: '00001',
+    C: '00010',
+    D: '00011',
+    E: '00100',
+    F: '00101',
+    G: '00110',
+    H: '00111',
+    I: '01000',
+    J: '01001',
+    K: '01010',
+    L: '01011',
+    M: '01100',
+    N: '01101',
+    O: '01110',
+    P: '01111',
+    Q: '10000',
+    R: '10001',
+    S: '10010',
+    T: '10011',
+    U: '10100',
+    V: '10101',
+    W: '10110',
+    X: '10111',
+    Y: '11000',
+    Z: '11001',
+    2: '11010',
+    3: '11011',
+    4: '11100',
+    5: '11101',
+    6: '11110',
+    7: '11111',
 }
 
 const initializeOptions = (options: Options): Required<Options> => {
@@ -137,23 +137,18 @@ const asciiToBuffer = (str: string): Buffer => {
  * @example base32ToBuffer('JBSWY3DPEHPK3PXP') // ArrayBuffer <48 65 6c 6c 6f 21 de ad be ef>
  */
 const base32ToBuffer = (str: string): Buffer => {
-    // Convert the base32 encoded string to a binary string
-    const binary = str.split('').map((char) => {
-        // Convert the character to its base32 value
-        const value = base32[char.charCodeAt(0)];
-        if (value === undefined) {
-            throw new Error(`Invalid base32 character: ${char}`);
-        }
-        // Convert the value to a binary string
-        return value.toString(2).padStart(5, '0');
-    }).join('');
+    // return error if invalid base32 character
+    if (str.match(/[^A-Z2-7]/)) {
+        throw new Error('Invalid base32 character');
+    }
+    const binaryString = str.split('').map((char) => base32BinValues[char]).join('');
     // Convert the binary string to a buffer
-    const buffer = Buffer.alloc(binary.length / 8);
-    for (let i = 0; i < binary.length; i += 8) {
-        buffer[i / 8] = parseInt(binary.slice(i, i + 8), 2);
+    const buffer = Buffer.alloc(binaryString.length / 8);
+    for (let i = 0; i < binaryString.length; i += 8) {
+        buffer[i / 8] = parseInt(binaryString.slice(i, i + 8), 2);
     }
     return buffer;
-};
+}
 /**
  * Calculate the time hex with padding of 16 characters
  *
