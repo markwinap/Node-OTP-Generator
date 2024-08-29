@@ -11,6 +11,15 @@ enum Encoding {
 	ASCII = 'ascii'
 }
 
+/**
+ * Options for configuring the TOTP (Time-Based One-Time Password) algorithm.
+ *
+ * @param digits - The number of digits in the generated OTP. Defaults to 6.
+ * @param algorithm - The algorithm used for generating the OTP. Defaults to "SHA1".
+ * @param encoding - The encoding used for the OTP. Defaults to "hex".
+ * @param period - The time period (in seconds) for which the OTP is valid. Defaults to 30 seconds.
+ * @param timestamp - The timestamp (in seconds) to use for generating the OTP. Defaults to the current time.
+ */
 interface Options {
     digits?: number
     algorithm?: Algorithm
@@ -230,7 +239,7 @@ const calculateOtp = (signatureHex: string, digits: number): string => {
  * @param {string} key
  * @param {Options} [options={}]
  * @returns {{ otp: number, expires: number }}
- * @example generate("JBSWY3DPEHPK3PXP", { timestamp: 1465324707000, algorithm: "SHA-256" }) // { otp: 461529, expires: 1465324707000 }
+ * @example generate("JBSWY3DPEHPK3PXP", { timestamp: 1465324707000, algorithm: Algorithm.SHA1 }) // { otp: 461529, expires: 1465324707000 }
  */
 const generate = (key: string, options: Options = {}): { otp: string, expires: number, remaining: number } => {
     const _options = initializeOptions(options);
