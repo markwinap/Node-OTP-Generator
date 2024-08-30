@@ -7,8 +7,8 @@ enum Algorithm {
 	SHA512 = 'SHA-512'
 }
 enum Encoding {
-	HEX = 'hex',
-	ASCII = 'ascii'
+	BASE32,
+	ASCII
 }
 
 /**
@@ -16,7 +16,7 @@ enum Encoding {
  *
  * @param digits - The number of digits in the generated OTP. Defaults to 6.
  * @param algorithm - The algorithm used for generating the OTP. Defaults to "SHA1".
- * @param encoding - The encoding used for the OTP. Defaults to "hex".
+ * @param encoding - The encoding used for the OTP. Defaults to "base32".
  * @param period - The time period (in seconds) for which the OTP is valid. Defaults to 30 seconds.
  * @param timestamp - The timestamp (in seconds) to use for generating the OTP. Defaults to the current time.
  */
@@ -67,7 +67,7 @@ const initializeOptions = (options: Options): Required<Options> => {
     return {
         digits: 6,
         algorithm: Algorithm.SHA1,
-        encoding: Encoding.HEX,
+        encoding: Encoding.BASE32,
         period: 30,
         timestamp: Date.now(),
         ...options,
@@ -214,11 +214,16 @@ const calculateOffset = (signatureHex: string): number => {
 const calculateMaskedValue = (signatureHex: string, offset: number): number => {
     // Get the 4 bytes at the offset
     // Slice the signature from the offset to offset + 8
-    // Convert the hexadecimal value to decimal
+    // Convert the hexadecimal value to decimal example 0b1db8d9 = 186497241
     // Bitwise AND (&) the decimal value with 0x7fffffff
+    // Example 1
+    // 0x0b1db8d9 & 0x7fffffff = 0x0b1db8d9
+    // 1011 0001 1101 1011 1000 1101 1001 & 0111 1111 1111 1111 1111 1111 1111 1111 = 1011 0001 1101 1011 1000 1101 1001
+    // Example 2
+    // 0x8cc8a965 & 0x7fffffff = 0x0cc8a965
+    // 1000 1100 1100 1000 1010 1001 0110 0101 & 0111 1111 1111 1111 1111 1111 1111 1111 = 1100 1100 1000 1010 1001 0110 0101
     return hex2dec(signatureHex.slice(offset, offset + 8)) & 0x7fffffff;
 };
-
 /**
  * Calculates the One-Time Password (OTP) based on the provided signature and number of digits.
  *
@@ -246,7 +251,7 @@ const generate = (key: string, options: Options = {}): { otp: string, expires: n
     const { digits, algorithm, encoding, period, timestamp } = _options;
 
     const timeHex = calculateTimeHex(timestamp, period);
-    const keyBuffer = encoding === Encoding.HEX ? base32ToBuffer(key) : asciiToBuffer(key);
+    const keyBuffer = encoding === Encoding.BASE32 ? base32ToBuffer(key) : asciiToBuffer(key);
     const signatureHex = calculateSignatureHex(algorithm, keyBuffer, timeHex);
     const otp = calculateOtp(signatureHex, digits);
 
