@@ -1,13 +1,13 @@
 import { createHmac } from 'node:crypto';
 
 enum Algorithm {
-	SHA1 = 'SHA-1',
+	SHA1 = 'SHA-1',// default
 	SHA256 = 'SHA-256',
 	SHA384 = 'SHA-384',
 	SHA512 = 'SHA-512'
 }
 enum Encoding {
-	BASE32,
+	BASE32,// default
 	ASCII
 }
 

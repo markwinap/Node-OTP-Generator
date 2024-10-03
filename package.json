@@ -4,7 +4,8 @@
   "description": "",
   "main": "index.ts",
   "scripts": {
-    "test": "jest"
+    "test": "jest",
+    "example": "npx ts-node example.ts"
   },
   "author": "Marco Martinez",
   "email": "markwinap@gmail.com",
