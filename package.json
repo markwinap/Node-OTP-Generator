@@ -1,7 +1,7 @@
 {
   "name": "node-ts-otp-generator",
   "version": "1.0.0",
-  "description": "",
+  "description": "Node OTP generator using TypeScript",
   "main": "index.ts",
   "scripts": {
     "test": "jest",
@@ -10,6 +10,12 @@
   "author": "Marco Martinez",
   "email": "markwinap@gmail.com",
   "license": "ISC",
+  "keywords": [
+    "node",
+    "typescript",
+    "otp",
+    "generator"
+  ],
   "devDependencies": {
     "@jest/globals": "^29.7.0",
     "@types/jest": "^29.5.12",
